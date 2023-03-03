@@ -1,10 +1,13 @@
 const express = require("express");
 const morgan = require("morgan");
 const app = express();
+const helmet = require("helmet");
 
 require("dotenv").config();
 
 express.static("public");
+
+app.use(helmet());
 
 app.use(express.json());
 app.use(morgan("dev"));
