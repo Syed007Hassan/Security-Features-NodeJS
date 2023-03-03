@@ -2,6 +2,8 @@ const express = require("express");
 const morgan = require("morgan");
 const app = express();
 
+require("dotenv").config();
+
 express.static("public");
 
 app.use(express.json());
