@@ -38,3 +38,15 @@ npm i helmet
   <p align="center">
   <img src="https://user-images.githubusercontent.com/104893311/222834087-59808e7e-0594-4877-bb90-7b7672900b19.png">
  </p>
+ 
+ ## OAUTH and Web Tokens
+ 
+* OAuth (Open Authorization) is an open-standard authorization protocol that allows third-party applications to access user data from an API without sharing the user's login credentials. OAuth is commonly used in web and mobile applications to allow users to sign in with their existing accounts from other services such as Google, Facebook, or Twitter.
+
+* In Node.js, there are several OAuth libraries available that you can use to implement OAuth functionality in your application. These libraries provide an easy way to handle OAuth authentication and authorization flow, including generating access tokens, refreshing access tokens, and revoking access tokens.
+
+* One popular library for OAuth in Node.js is passport which is a flexible authentication middleware that supports a variety of authentication mechanisms including OAuth. Passport allows you to integrate OAuth authentication with your application using various OAuth providers such as Google, Facebook, Twitter, and many more. It simplifies the OAuth process by handling the complex authentication and authorization flow and providing a standardized way to integrate with different OAuth providers.
+
+<p align="center">
+  <img src="https://images.ctfassets.net/cdy7uua7fh8z/2nbNztohyR7uMcZmnUt0VU/2c017d2a2a2cdd80f097554d33ff72dd/auth-sequence-auth-code.png">
+ </p>
