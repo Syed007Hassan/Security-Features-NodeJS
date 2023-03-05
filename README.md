@@ -43,8 +43,73 @@ npm i helmet
 <p align="center">
   <img src="https://images.ctfassets.net/cdy7uua7fh8z/2nbNztohyR7uMcZmnUt0VU/2c017d2a2a2cdd80f097554d33ff72dd/auth-sequence-auth-code.png">
  </p>
+ 
+ * To use passport strategy
 
 ```sh
 npm i passport passport-google-oauth20
 ```
 
+```
+const config = {
+  CLIENT_ID: process.env.CLIENT_ID,
+  CLIENT_SECRET: process.env.CLIENT_SECRET,
+};
+
+const AUTH_OPTIONS = {
+  callbackURL: "/auth/google/callback",
+  clientID: config.CLIENT_ID,
+  clientSecret: config.CLIENT_SECRET,
+};
+
+const verifyCallback = (accessToken, refreshToken, profile, done) => {
+  console.log("accessToken", accessToken);
+  console.log("refreshToken", refreshToken);
+  console.log("profile", profile);
+  done(null, profile);
+};
+
+//passport will use the strategy we created
+passport.use(new Strategy(AUTH_OPTIONS, verifyCallback));
+
+//passport middleware to authenticate requests
+app.use(passport.initialize());
+
+const checkLoggedIn = (req, res, next) => {
+  const isLoggedIn = 1;
+  if (!isLoggedIn) {
+    res.status(401).send("Please log in");
+  } else {
+    next();
+  }
+};
+
+// this is the route that the user will hit to start the authentication process
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile"] })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/failure",
+    successRedirect: "/",
+    session: false,
+  }),
+  (req, res) => {
+    console.log("Google auth callback");
+  }
+);
+
+```
+
+## Express-Session and Cookie-Session
+
+* express-session and cookie-session are both middleware packages for managing sessions in Node.js applications. However, they have some differences in their implementation and usage.
+
+* express-session is a more powerful and flexible package that allows you to store session data on the server or in a separate session store, such as Redis or MongoDB. It generates a unique session identifier (session ID) for each client and stores it in a cookie. The session data is then stored on the server or in the session store, and the client's session ID is used to retrieve it when needed. express-session also supports advanced session features such as session expiration, rolling sessions, and secure cookie options.
+
+* On the other hand, cookie-session is a simpler package that only stores session data in cookies on the client-side. It does not require a separate session store, but it is limited in terms of the amount of data that can be stored and the security options available. cookie-session is useful for simple applications where session data is minimal and security requirements are not very strict.
+
+* For expression-session refer to [this repo](https://github.com/Syed007Hassan/Authentication-And-Security-To-A-Website).
