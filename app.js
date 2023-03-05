@@ -47,6 +47,7 @@ passport.deserializeUser((user, done) => {
 //helmet middleware to secure Express apps by setting various HTTP headers
 app.use(helmet());
 
+//cookieSession middleware to store session data in a cookie
 app.use(
   cookieSession({
     name: "session",
@@ -90,7 +91,11 @@ app.get(
   }
 );
 
-app.get("/auth/logout", (req, res) => {});
+app.get("/auth/logout", (req, res) => {
+  //req.logout() is a function attached to the request object by passport
+  req.logout();
+  return res.redirect("/");
+});
 
 app.get("/secret", checkLoggedIn, (req, res) => {
   res.send("<h1>Secret page</h1>");
