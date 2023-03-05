@@ -43,8 +43,63 @@ npm i helmet
 <p align="center">
   <img src="https://images.ctfassets.net/cdy7uua7fh8z/2nbNztohyR7uMcZmnUt0VU/2c017d2a2a2cdd80f097554d33ff72dd/auth-sequence-auth-code.png">
  </p>
+ 
+ * To use passport strategy
 
 ```sh
 npm i passport passport-google-oauth20
 ```
 
+```
+const config = {
+  CLIENT_ID: process.env.CLIENT_ID,
+  CLIENT_SECRET: process.env.CLIENT_SECRET,
+};
+
+const AUTH_OPTIONS = {
+  callbackURL: "/auth/google/callback",
+  clientID: config.CLIENT_ID,
+  clientSecret: config.CLIENT_SECRET,
+};
+
+const verifyCallback = (accessToken, refreshToken, profile, done) => {
+  console.log("accessToken", accessToken);
+  console.log("refreshToken", refreshToken);
+  console.log("profile", profile);
+  done(null, profile);
+};
+
+//passport will use the strategy we created
+passport.use(new Strategy(AUTH_OPTIONS, verifyCallback));
+
+//passport middleware to authenticate requests
+app.use(passport.initialize());
+
+const checkLoggedIn = (req, res, next) => {
+  const isLoggedIn = 1;
+  if (!isLoggedIn) {
+    res.status(401).send("Please log in");
+  } else {
+    next();
+  }
+};
+
+// this is the route that the user will hit to start the authentication process
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile"] })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/failure",
+    successRedirect: "/",
+    session: false,
+  }),
+  (req, res) => {
+    console.log("Google auth callback");
+  }
+);
+
+```
