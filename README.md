@@ -113,3 +113,49 @@ app.get(
 * On the other hand, cookie-session is a simpler package that only stores session data in cookies on the client-side. It does not require a separate session store, but it is limited in terms of the amount of data that can be stored and the security options available. cookie-session is useful for simple applications where session data is minimal and security requirements are not very strict.
 
 * For expression-session refer to [this repo](https://github.com/Syed007Hassan/Authentication-And-Security-To-A-Website).
+
+* To use cookie-session
+
+```
+npm i cookie-session
+```
+
+```
+//save the session to the cookie
+passport.serializeUser((user, done) => {
+  // User.findOrCreate({ googleId: user.id }
+  console.log("serialize user will match islogged id: " + user.id);
+  done(null, user.id, user.displayName);
+});
+
+//retrieve the session from the cookie
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
+//cookieSession middleware to store session data in a cookie
+app.use(
+  cookieSession({
+    name: "session",
+    maxAge: 24 * 60 * 60 * 1000,
+    keys: [config.COOKIE_KEY_1, config.COOKIE_KEY_2], // rotate keys every 24 hours
+  })
+);
+
+const checkLoggedIn = (req, res, next) => {
+  const isLoggedIn = req.user;
+  console.log("is logged in:" + isLoggedIn);
+  if (!isLoggedIn) {
+    res.status(401).send("Please log in");
+  } else {
+    next();
+  }
+};
+
+app.get("/auth/logout", (req, res) => {
+  //req.logout() is a function attached to the request object by passport
+  req.logout();
+  return res.redirect("/");
+});
+
+```
