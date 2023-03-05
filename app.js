@@ -25,9 +25,7 @@ const AUTH_OPTIONS = {
 };
 
 const verifyCallback = (accessToken, refreshToken, profile, done) => {
-  console.log("accessToken", accessToken);
-  console.log("refreshToken", refreshToken);
-  console.log("profile", profile);
+  // console.log("profile", profile);
   done(null, profile);
 };
 
@@ -36,7 +34,9 @@ passport.use(new Strategy(AUTH_OPTIONS, verifyCallback));
 
 //save the session to the cookie
 passport.serializeUser((user, done) => {
-  done(null, user);
+  // User.findOrCreate({ googleId: user.id }
+  console.log("serialize user will match islogged id: " + user.id);
+  done(null, user.id, user.displayName);
 });
 
 //retrieve the session from the cookie
@@ -56,12 +56,15 @@ app.use(
 );
 //passport middleware to authenticate requests
 app.use(passport.initialize());
+// passport middleware to restore authentication state from session
+app.use(passport.session());
 
 app.use(express.json());
 app.use(morgan("dev"));
 
 const checkLoggedIn = (req, res, next) => {
-  const isLoggedIn = 1;
+  const isLoggedIn = req.user;
+  console.log("is logged in:" + isLoggedIn);
   if (!isLoggedIn) {
     res.status(401).send("Please log in");
   } else {
@@ -80,7 +83,7 @@ app.get(
   passport.authenticate("google", {
     failureRedirect: "/failure",
     successRedirect: "/secret",
-    session: false,
+    session: true,
   }),
   (req, res) => {
     console.log("Google auth callback");
